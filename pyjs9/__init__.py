@@ -344,6 +344,7 @@ class JS9:
 
         if js9Globals['transport'] == 'html': # pylint: disable=no-else-return
             host = self.__dict__['host']
+            logging.debug(f"Sending HTTP POST to host: {host} with msg: {msg} and json: {obj}")
             try:
                 url = requests.post(host + '/' + msg, json=obj)
             except IOError as e:
