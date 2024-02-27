@@ -231,9 +231,10 @@ class JS9:
 
     """
 
-    def __init__(self, host='http://localhost:2718', id='JS9', socketio_path=None, multi=False, pageid=None, maxtries=5, delay=1, debug=False):  # pylint: disable=redefined-builtin, too-many-arguments, line-too-long
+    def __init__(self, host='http://localhost', port=2718, id='JS9', socketio_path=None, multi=False, pageid=None, maxtries=5, delay=1, debug=False):  # pylint: disable=redefined-builtin, too-many-arguments, line-too-long
         """
-        :param host: host[:port] (def: 'http://localhost:2718')
+        :param host: host and endpoint of JS9 Helper (default: 'http://localhost')
+        :param port: port of the JS9 Helper service, appended to the host (default: 2718)
         :param id: the JS9 display id (def: 'JS9')
         :param socketio_path: subpath to socketio server (optional)
 
@@ -259,7 +260,8 @@ class JS9:
         c = host.rfind(':')
         s = host.find('/')
         if c <= s:
-            host += ':2718'
+            if port:
+                host += f':{port}'
         if s < 0:
             host = 'http://' + host
         self.__dict__['host'] = host
