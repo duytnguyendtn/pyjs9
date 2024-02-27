@@ -231,10 +231,11 @@ class JS9:
 
     """
 
-    def __init__(self, host='http://localhost:2718', id='JS9', multi=False, pageid=None, maxtries=5, delay=1, debug=False):  # pylint: disable=redefined-builtin, too-many-arguments, line-too-long
+    def __init__(self, host='http://localhost:2718', id='JS9', socketio_path=None, multi=False, pageid=None, maxtries=5, delay=1, debug=False):  # pylint: disable=redefined-builtin, too-many-arguments, line-too-long
         """
         :param host: host[:port] (def: 'http://localhost:2718')
         :param id: the JS9 display id (def: 'JS9')
+        :param socketio_path: subpath to socketio server (optional)
 
         :rtype: JS9 object connected to a single instance of js9
 
@@ -272,7 +273,11 @@ class JS9:
                                                   engineio_logger=True)
                 else:
                     self.sockio = socketio.Client()
-                self.sockio.connect(host)
+                logging.debug(f"### Connecting to socketio host: {host} at path {socketio_path}")
+                if socketio_path:
+                    self.sockio.connect(host, socketio_path=socketio_path)
+                else:
+                    self.sockio.connect(host)
             except Exception as e:  # pylint: disable=broad-except
                 logging.warning('socketio connect failed: %s, using html', e)
                 js9Globals['transport'] = 'html'
