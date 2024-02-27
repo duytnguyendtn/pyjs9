@@ -77,6 +77,7 @@ except ImportError:
     logging.info('no python-socketio, use html transport')
     js9Globals['transport'] = 'html'
     js9Globals['wait'] = 0
+logging.debug(f"### Setting Transport mode: {js9Globals['transport']}")
 
 # utilities
 def _decode_list(data):
@@ -268,6 +269,7 @@ class JS9:
         self.__dict__['multi'] = multi
         self.__dict__['pageid'] = pageid
         # open socket.io connection, if necessary
+        logging.debug(f"Trying Transport mode: {js9Globals['transport']}")
         if js9Globals['transport'] == 'socketio':
             try:
                 if debug:
@@ -281,8 +283,9 @@ class JS9:
                 else:
                     self.sockio.connect(host)
             except Exception as e:  # pylint: disable=broad-except
-                logging.warning('socketio connect failed: %s, using html', e)
+                logging.warning('socketio connect failed: %s, using HTTP', e)
                 js9Globals['transport'] = 'html'
+        logging.debug(f"Using Transport mode: {js9Globals['transport']}")
         self._block_cb = None
         # wait for connect be ready, but success doesn't really matter here
         tries = 0
@@ -345,6 +348,7 @@ class JS9:
 
         if js9Globals['transport'] == 'html': # pylint: disable=no-else-return
             host = self.__dict__['host']
+            logging.debug(f"Sending HTTP POST to host: {host} with msg: {msg} and json: {obj}")
             try:
                 url = requests.post(host + '/' + msg, json=obj)
             except IOError as e:
