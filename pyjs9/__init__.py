@@ -7,6 +7,7 @@ import time
 import json
 import base64
 import logging
+from pathlib import Path
 from traceback import format_exc
 from threading import Condition
 from io import BytesIO
@@ -4134,6 +4135,14 @@ class JS9:
         which must be specified, can be a local file (with absolute path or a
         path relative to the displayed web page) or a URL.
         """
+        # If given a CLIENT filepath, open it client-side and transmit the file contents
+        if len(args) == 1:
+            filepath = Path(args[0])
+            if filepath.exists():
+                with open(filepath, 'r') as file:
+                    data = file.read()
+                    # Override args
+                    args = [data, {'blob': True}]
         return self.send({'cmd': 'LoadRegions', 'args': args})
 
     def LoadCatalog(self, *args):
